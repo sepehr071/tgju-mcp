@@ -1,0 +1,46 @@
+{
+ "draw": null,
+ "recordsTotal": 4,
+ "recordsFiltered": 4,
+ "data": [
+  [
+   "<a href=\"profile/geram18\">طلای 18 عیار / 750</a>",
+   "<span dir=\"ltr\">261,778,000</span>",
+   "۱۹:۵۹:۵۳",
+   "<span class=\"high\" dir=\"ltr\">2,406,000</span>",
+   "<span class=\"high\" dir=\"ltr\">0.93%</span>",
+   "<span dir=\"ltr\">262,835,000</span>",
+   "<span dir=\"ltr\">259,354,000</span>",
+   "<span dir=\"ltr\">259,354,000</span>",
+   "<span class=\"high\" dir=\"ltr\">8,191,615</span>",
+   "262,551,000",
+   "267,383,000"
+  ],
+  [
+   "<a href=\"profile/geram24\">طلای ۲۴ عیار</a>",
+   "<span dir=\"ltr\">349,034,000</span>",
+   "۱۹:۵۹:۵۳",
+   "<span class=\"high\" dir=\"ltr\">3,208,000</span>",
+   "<span class=\"high\" dir=\"ltr\">0.93%</span>",
+   "<span dir=\"ltr\">350,443,000</span>",
+   "<span dir=\"ltr\">345,802,000</span>",
+   "<span dir=\"ltr\">345,802,000</span>",
+   "<span class=\"high\" dir=\"ltr\">10,922,154</span>",
+   "350,065,000",
+   "356,507,000"
+  ],
+  [
+   "<a href=\"profile/gold_740k\">طلای 18 عیار / 740</a>",
+   "<span dir=\"ltr\">258,288,000</span>",
+   "۱۹:۵۹:۵۴",
+   "<span class=\"high\" dir=\"ltr\">2,374,000</span>",
+   "<span class=\"high\" dir=\"ltr\">0.93%</span>",
+   "<span dir=\"ltr\">259,331,000</span>",
+   "<span dir=\"ltr\">255,896,000</span>",
+   "<span dir=\"ltr\">255,896,000</span>",
+   "<span class=\"high\" dir=\"ltr\">8,082,731</span>",
+   "259,051,000",
+   "263,818,000"
+  ]
+ ]
+}

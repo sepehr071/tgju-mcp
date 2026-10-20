@@ -1,0 +1,36 @@
+{
+ "response": {
+  "items": [
+   {
+    "id": 28068,
+    "label": "سکه نقدی",
+    "type": "folder"
+   },
+   {
+    "id": 28067,
+    "label": "سکه تک‌فروشی",
+    "type": "folder"
+   },
+   {
+    "id": 28423,
+    "label": "سکه تاریخ پایین",
+    "type": "folder"
+   },
+   {
+    "id": 79535,
+    "label": "سکه پارسیان",
+    "type": "folder"
+   },
+   {
+    "id": 98760,
+    "label": "سکه در بورس",
+    "type": "folder"
+   },
+   {
+    "id": 30021,
+    "label": "حباب سکه ها",
+    "type": "folder"
+   }
+  ]
+ }
+}

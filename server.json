@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sepehr071/tgju-mcp",
+  "title": "TGJU Prices",
+  "description": "Unofficial read-only TGJU: live Iranian gold, coin, currency and crypto prices with daily history.",
+  "repository": {
+    "url": "https://github.com/sepehr071/tgju-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://github.com/sepehr071/tgju-mcp",
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "tgju-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "TGJU_MCP_PROXY",
+          "description": "Optional HTTP proxy URL for tgju.org requests; system proxy settings are ignored. Also accepts a comma-separated list: one is used until it gets blocked or fails to connect, then the next.",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
