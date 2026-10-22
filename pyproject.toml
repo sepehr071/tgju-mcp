@@ -1,13 +1,13 @@
 [project]
 name = "tgju-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "Unofficial read-only MCP server for TGJU (tgju.org): live Iranian gold, coin, currency and crypto prices, daily history."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Sepehr Radmard", email = "sepehrr80@gmail.com" }]
 requires-python = ">=3.10"
-keywords = ["mcp", "model-context-protocol", "tgju", "iran", "gold", "currency", "dollar", "coin", "prices"]
+keywords = ["mcp", "mcp-server", "model-context-protocol", "tgju", "tgju-org", "iran", "persian", "gold-price", "dollar-price", "coin-price", "currency", "exchange-rate", "crypto", "ai-agents"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
