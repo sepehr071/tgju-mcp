@@ -29,6 +29,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/sepehr071/tgju-mcp"
 Issues = "https://github.com/sepehr071/tgju-mcp/issues"
+Website = "https://mcpfarsi.ir/servers/tgju/"
 
 [project.scripts]
 tgju-mcp = "tgju_mcp.server:main"

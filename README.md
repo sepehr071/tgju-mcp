@@ -11,6 +11,7 @@ dollar, euro, gold, coin, crypto and commodity prices, category tables and daily
 [![CI](https://github.com/sepehr071/tgju-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/sepehr071/tgju-mcp/actions/workflows/ci.yml)
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-io.github.sepehr071%2Ftgju--mcp-7c3aed)](https://registry.modelcontextprotocol.io/?q=tgju-mcp)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](https://github.com/sepehr071/tgju-mcp/blob/main/LICENSE)
+[![mcpfarsi](https://mcpfarsi.ir/badge/tgju.svg)](https://mcpfarsi.ir/servers/tgju/)
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_tgju--mcp-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=tgju&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22tgju-mcp%22%5D%7D)
 
@@ -330,6 +331,7 @@ Releases: bump the version in `pyproject.toml` and `server.json`, then push a `v
 - [iran-crypto-mcp](https://github.com/sepehr071/iran-crypto-mcp) for crypto prices on Iranian exchanges
 - [milligold-mcp](https://github.com/sepehr071/milligold-mcp) for gold prices on Milli
 - [iran-news-mcp](https://github.com/sepehr071/iran-news-mcp) for Iranian news
+- Listed on [mcpfarsi.ir](https://mcpfarsi.ir/servers/tgju/), the Persian MCP marketplace
 
 ## Disclaimer
 
