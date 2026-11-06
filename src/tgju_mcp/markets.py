@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 from datetime import date, datetime, timedelta, timezone
@@ -124,28 +125,23 @@ def _signed(cell: str, v: int | float | None) -> int | float | None:
 @tool("Search symbols")
 async def tj_search_symbols(
     query: Annotated[
-        str, Field(min_length=2, description="Name or code, Persian or English, e.g. 'سکه امامی', 'bitcoin', 'brent'.")
+        str, Field(min_length=2, description="Name or code, Persian or English, e.g. 'سکه امامی', 'brent'.")
     ],
     scope: Annotated[
         Literal["internal", "global", "crypto"],
-        Field(
-            description="internal = Iranian markets (gold, coins, currencies, funds), global = world markets and pairs, crypto = coins."
-        ),
+        Field(description="internal = Iranian markets, global = world markets and pairs, crypto = coins."),
     ] = "internal",
-    limit: Annotated[int, Field(ge=1, le=10, description="Max matches (the site returns at most 10).")] = 10,
+    limit: Annotated[int, Field(ge=1, le=10, description="Max matches.")] = 10,
 ) -> dict[str, Any]:
     """Find TGJU symbols by name.
 
-    Use when you do not know the symbol slug; pass a result's `symbol` to tj_get_prices or tj_price_history.
-    Main symbols come back as their short live symbol; the rest as a slug, which tj_get_prices answers from
-    the latest daily history row (`source: history`).
+    Use when the symbol is unknown; pass a result's `symbol` to tj_get_prices or tj_price_history.
     """
-    body = await fetch(f"{API}/v1/search", {"q": query})
+    body, live = await asyncio.gather(fetch(f"{API}/v1/search", {"q": query}), _live())
     raw = body["response"]["result"].get(
         {"internal": "markets.internal", "global": "markets.global", "crypto": "crypto"}[scope]
     )
     hits = (json.loads(raw) if isinstance(raw, str) else raw or {}).get("hits", {})
-    live = await _live()
     out = []
     for h in hits.get("hits", [])[:limit]:
         s = h["_source"]
@@ -169,16 +165,15 @@ async def tj_search_symbols(
 async def tj_list_categories(
     parent_id: Annotated[
         str | None,
-        Field(description="Folder id to open, e.g. '28064' (gold market) or 'currencies'. Omit for the top level."),
+        Field(description="Folder id, e.g. '28064'. Omit for the top level."),
     ] = None,
     limit: Annotated[int, Field(ge=1, le=100, description="Max items.")] = 50,
-    offset: Annotated[int, Field(ge=0, description="Items to skip (big folders such as crypto have thousands).")] = 0,
+    offset: Annotated[int, Field(ge=0, description="Items to skip.")] = 0,
 ) -> dict[str, Any]:
     """Browse TGJU's market tree: folders (with ids) and symbols.
 
-    Use to discover a group; call tj_category_table with a folder id to get its prices, or pass a symbol
-    from a 'link' item to tj_get_prices. Top level: 28064 gold, 28066 coin, 28069 currency, 28426 crypto,
-    28048 precious metals, 28049 oil and energy, 28042 commodities.
+    Pass a folder id to tj_category_table, or a 'link' item's symbol to tj_get_prices. Top level: 28064 gold,
+    28066 coin, 28069 currency, 28426 crypto, 28048 precious metals, 28049 oil and energy, 28042 commodities.
     """
     body = await fetch(f"{API}/v1/market/finder/list", {"id": parent_id} if parent_id else None)
     items = body["response"]["items"]
@@ -196,19 +191,16 @@ async def tj_category_table(
     category: Annotated[
         str,
         Field(
-            description="Preset (gold, coin, coin_retail, currency, currency_government, currency_sana, currency_nima, crypto) or a folder id from tj_list_categories, e.g. '28070'."
+            description="Preset (gold, coin, coin_retail, currency, currency_government, currency_sana, currency_nima, crypto) or a folder id from tj_list_categories."
         ),
     ],
-    limit: Annotated[int, Field(ge=1, le=50, description="Max rows (50 keeps the reply under 15 KB).")] = 25,
+    limit: Annotated[int, Field(ge=1, le=50, description="Max rows.")] = 25,
     offset: Annotated[int, Field(ge=0, description="Rows to skip.")] = 0,
 ) -> dict[str, Any]:
     """Live price table of one TGJU group: price, change, day high/low/open per symbol.
 
-    Use for 'all gold prices', 'all coin prices', 'all currency rates'. Rial groups carry `price_toman`
-    (Rial / 10); crypto is USD. A folder id gets the unit per row from the symbol-name rule (`unit: mixed`
-    adds a `unit` to each row); unknown symbols, e.g. exchange-house quotes, stay `as_listed`. `stale` marks
-    a quote older than 2 days. The crypto preset lists all
-    ~27,000 coins in no useful order: use tj_get_prices for major coins and tj_search_symbols for the rest.
+    Use for 'all gold prices', 'all coin prices'. Rial groups carry `*_toman`; crypto is USD; `unit: mixed`
+    adds a `unit` per row. The crypto preset lists ~27,000 coins unordered: use tj_get_prices or tj_search_symbols.
     """
     cid, default_unit = CATEGORIES.get(category, (category, None))
     if not cid.isdigit():
@@ -278,28 +270,24 @@ def _price(symbol: str, q: dict[str, Any]) -> dict[str, Any]:
 async def tj_get_prices(
     symbols: Annotated[
         list[str],
-        Field(
-            min_length=1,
-            max_length=30,
-            description="Symbol slugs, e.g. ['price_dollar_rl', 'geram18', 'sekee', 'crypto-bitcoin'].",
-        ),
+        Field(min_length=1, max_length=30, description="Symbol slugs, e.g. ['price_dollar_rl', 'geram18', 'sekee']."),
     ],
 ) -> dict[str, Any]:
     """Live price, day change, high and low for one or more TGJU symbols.
 
-    Use for current rates. Rial symbols also carry `*_toman`. `time` is the last update (Tehran time);
-    old values mean the market is closed; `stale: true` marks a quote older than 2 days. Symbols missing
-    from the live feed (slugs from tj_search_symbols) answer with their latest daily close (`source: history`,
-    `time` = date). Unknown symbols are listed in `not_found`: find them with tj_search_symbols.
+    Use for current rates. Rial symbols also carry `*_toman`. `stale: true` = quote older than 2 days.
+    Slugs missing from the live feed answer with their latest daily close (`source: history`). Unknown ones
+    go to `not_found`: use tj_search_symbols.
     """
     live = await _live()
+    keys = [k if k in live else k.lower() for k in (s.strip() for s in symbols)]
+    hist = await asyncio.gather(*(_latest(k) for k in keys if k not in live))
+    hist_iter = iter(hist)
     found, missing = [], []
-    for s in symbols:
-        key = s.strip()
-        key = key if key in live else key.lower()
+    for s, key in zip(symbols, keys, strict=True):
         if key in live:
             found.append(_price(key, live[key]))
-        elif p := await _latest(key):
+        elif p := next(hist_iter):
             found.append(p)
         else:
             missing.append(s)
@@ -308,10 +296,10 @@ async def tj_get_prices(
 
 @tool("Key rates summary")
 async def tj_market_summary() -> dict[str, Any]:
-    """Key Iranian market rates in one call: dollar, euro, dirham, pound, lira, gold gram and ounce, coins, silver, Brent, Bitcoin, Ethereum, Tether.
+    """Key Iranian market rates in one call: dollar, euro, gold, coins, ounce, Brent, Bitcoin, Tether.
 
     Use first for 'what are today's rates'. Rial values carry `*_toman`; ounce, Brent, Bitcoin USD and
-    Ethereum are USD. Drill into a group with tj_category_table.
+    Ethereum are USD.
     """
     live = await _live()
     return {
@@ -373,13 +361,10 @@ async def _latest(symbol: str) -> dict[str, Any] | None:
 async def tj_price_history(
     symbol: Annotated[
         str,
-        Field(
-            min_length=1,
-            description="Symbol slug, e.g. 'price_dollar_rl', 'geram18', 'sekee', 'ons', 'crypto-bitcoin'.",
-        ),
+        Field(min_length=1, description="Symbol slug, e.g. 'price_dollar_rl', 'geram18', 'ons'."),
     ],
-    limit: Annotated[int, Field(ge=1, le=50, description="Max daily rows (50 keeps the reply under 15 KB).")] = 30,
-    offset: Annotated[int, Field(ge=0, description="Rows to skip (for older pages).")] = 0,
+    limit: Annotated[int, Field(ge=1, le=50, description="Max daily rows.")] = 30,
+    offset: Annotated[int, Field(ge=0, description="Rows to skip.")] = 0,
     from_date: Annotated[
         str | None, Field(pattern=r"^\d{4}/\d{2}/\d{2}$", description="Jalali start date, e.g. '1405/07/01'.")
     ] = None,
@@ -390,8 +375,7 @@ async def tj_price_history(
 ) -> dict[str, Any]:
     """Daily history (open, low, high, close, change) of a TGJU symbol, for charts and trend questions.
 
-    Use after tj_get_prices. Each row has Gregorian `date` and Jalali `jalali`; Rial symbols also carry
-    `*_toman`. Days without a quote are missing. `total` is the number of rows in range: page with offset.
+    Rows carry Gregorian `date` and Jalali `jalali`; Rial symbols also carry `*_toman`. `total` = rows in range.
     """
     params: dict[str, Any] = {
         "lang": "fa",
