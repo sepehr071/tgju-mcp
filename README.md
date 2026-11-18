@@ -15,7 +15,7 @@ dollar, euro, gold, coin, crypto and commodity prices, category tables and daily
 
 [![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_tgju--mcp-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=tgju&config=%7B%22command%22%3A%22uvx%22%2C%22args%22%3A%5B%22tgju-mcp%22%5D%7D)
 
-[For AI agents](#for-ai-agents) · [Why](#why) · [What it can do](#what-it-can-do) · [Quick start](#quick-start) · [Tools](#tools) · [How it works](#how-it-works) · [Good to know](#good-to-know) · [FAQ](#faq) · [Configuration](#configuration) · [فارسی](#فارسی) · [Development](#development)
+[For AI agents](#for-ai-agents) · [Why](#why) · [What it can do](#what-it-can-do) · [Quick start](#quick-start) · [Tools](#tools) · [Good to know](#good-to-know) · [FAQ](#faq) · [Configuration](#configuration) · [فارسی](#فارسی) · [Development](#development)
 
 ---
 
@@ -171,23 +171,6 @@ Symbols are lower-case slugs such as `price_dollar_rl`, `geram18` or `sekee`. If
 | `tj_price_history` | Daily history (open, low, high, close, change) of a TGJU symbol, for charts and trend questions |
 
 All 6 tools are annotated `readOnlyHint: true`.
-
-## How it works
-
-```text
-  AI agent  (Claude, Cursor, Copilot, ...)
-      │
-      │  MCP over stdio
-      ▼
-  tgju-mcp  (runs on your machine)
-      │
-      │  HTTPS
-      └──────▶  api.tgju.org, call4.tgju.org   live feed, tables, history, search
-```
-
-`tgju-mcp` runs locally and calls the same endpoints the tgju.org site uses. It has no hosted server in between and
-no API key. Requests go out through a Chrome-impersonating client, at most 2 at a time with a little jitter. Answers
-are kept for 15 seconds, a failed GET is retried, and it only talks to `api.tgju.org` and `call4.tgju.org`. It only reads.
 
 ## Good to know
 
